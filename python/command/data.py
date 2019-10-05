@@ -64,7 +64,10 @@ class put:
         if not status:
             return False
         code, message = self.ftp.readMessage()
-        terminal.info('Data transfer success.')
+        if code != 226:
+            terminal.error('%d %s' % (code, message))
+        terminal.info('File "%s" transferd success, file size: %s' %
+                      (params, base.formatFileSize(len(data))))
         return True
 
 
@@ -119,7 +122,8 @@ class get:
         if status < 0 or code != 226:
             terminal.error('File transfer failed: %s' % message)
             return False
-        terminal.info(message)
+        terminal.info('File "%s" transferd success, file size: %s' %
+                      (params, base.formatFileSize(len(data))))
         return True
 
 

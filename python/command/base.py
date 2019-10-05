@@ -1,22 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+# Object register
 __commandMap = {}
-__serverStatus = False
-
-
-def setConnStatus(status):
-    '''
-        test
-    '''
-    __serverStatus = status
-
-
-def getConnStatus():
-    '''
-        test
-    '''
-    return __serverStatus
 
 
 def regObj(name, obj):
@@ -35,3 +21,38 @@ def getObj(name):
     if name in __commandMap:
         return __commandMap[name]
     return None
+
+
+def formatFileSize(sizeBytes):
+    '''
+        File size format
+    '''
+    sizeBytes = float(sizeBytes)
+    result = float(abs(sizeBytes))
+    suffix = 'B'
+    if(result > 1024):
+        suffix = 'KB'
+        mult = 1024
+        result = result / 1024
+
+    if(result > 1024):
+        suffix = 'MB'
+        mult *= 1024
+        result = result / 1024
+
+    if (result > 1024):
+        suffix = 'GB'
+        mult *= 1024
+        result = result / 1024
+
+    if (result > 1024):
+        suffix = 'TB'
+        mult *= 1024
+        result = result / 1000
+
+    if (result > 1024):
+        suffix = 'PB'
+        mult *= 1024
+        result = result / 1024
+
+    return format(result, '.2f')+' '+suffix

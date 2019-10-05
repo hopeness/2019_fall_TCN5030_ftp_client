@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import argparse, time
+import argparse
 from . import terminal, remote, command
 
 # Parse parameters

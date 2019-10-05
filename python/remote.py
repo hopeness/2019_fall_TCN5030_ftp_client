@@ -46,7 +46,7 @@ class Connect:
         self.password = input('PASSWORD> ').strip()
         return True
 
-    def login(self, user = None, password = ''):
+    def login(self, user=None, password=''):
         '''
             Login
         '''
@@ -105,7 +105,7 @@ class Connect:
             terminal.error('Send data to server failed: %s' % str(e))
             return False
         return True
-    
+
     def readMessage(self):
         '''
             Read and format message to code and message
@@ -116,12 +116,6 @@ class Connect:
         code = int(result[0:3])
         # Timeout re-connect
         if code == 421:
-            status = self.connect(self.host, self.port)
-            if status:
-                status = self.login()
-                if status:
-                    terminal.info('FTP server re-connect, please re do your action.')
-                    return 0, ''
             terminal.error('FTP server connection timeout, please re-connect.')
             exit()
         message = result[4:].strip()

@@ -43,7 +43,7 @@ class ls:
 
         # Execute list command
         command = 'LIST'
-        code, _ = self.ftp.send(command)
+        code, _ = self.ftp.sendCommand(command)
         if code != 150:
             return False
 
@@ -74,9 +74,10 @@ class pwd:
             execute
         '''
         command = 'PWD'
-        code, message = self.ftp.send(command)
+        code, message = self.ftp.sendCommand(command)
         if code != 257:
-            terminal.error('PWD command execute failed: %d %s' % (code, message))
+            terminal.error('PWD command execute failed: %d %s' %
+                           (code, message))
             return False
         terminal.echo(message[message.find('"')+1:message.rfind('"')])
         return True
@@ -100,7 +101,10 @@ class cd:
             execute
         '''
         command = 'CWD %s' % params
-        _, message = self.ftp.send(command)
+        code, message = self.ftp.sendCommand(command)
+        if code != 250:
+            terminal.error('"cd %s" failed: %s' % (params, message))
+            return False
         terminal.info(message)
         return True
 

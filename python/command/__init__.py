@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 from .base import *
-from . import dir
 from . import control
+from . import dir
+from . import data
 from . import help

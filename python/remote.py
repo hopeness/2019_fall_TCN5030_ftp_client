@@ -23,8 +23,6 @@ class Connect:
             Init
         '''
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.conn.close
-        # ftpSock.setblocking(False)
 
     def connect(self, host, port):
         '''
@@ -34,24 +32,34 @@ class Connect:
         self.port = port
         try:
             self.conn.connect((self.host, self.port))
+            self.conn.setblocking(True)
             return True
         except Exception as e:
-            terminal.error('Connect data port failed: ' % str(e))
+            terminal.error('Connect data port failed: %s' % str(e))
             return False
 
-    def login(self):
+    def terminalLogin(self):
+        '''
+            login by terminal
+        '''
+        self.user = input('USER> ').strip()
+        self.password = input('PASSWORD> ').strip()
+        return True
+
+    def login(self, user = None, password = ''):
         '''
             Login
         '''
-        self.user = input('USER> ').strip()
-        command = 'USER %s' % self.user
-        code, message = self.send(command)
+        if user == None:
+            user = self.user
+            password = self.password
+        command = 'USER %s' % user
+        code, message = self.sendCommand(command)
         if code != 331:
-            terminal.error('%d %s' % (message))
+            terminal.error('%d %s' % (code, message))
             return False
-        self.password = input('PASSWORD> ').strip()
-        command = 'PASS %s' % self.password
-        code, message = self.send(command)
+        command = 'PASS %s' % password
+        code, message = self.sendCommand(command)
         if code != 230:
             terminal.error('%d %s' % (code, message))
             return False
@@ -62,7 +70,7 @@ class Connect:
         '''
             Set EPSV
         '''
-        code, message = self.send('EPSV')
+        code, message = self.sendCommand('EPSV')
         if code != 229:
             terminal.error('Set EPSV failed: %d %s' % (code, message))
             return False
@@ -73,20 +81,49 @@ class Connect:
         '''
             Set transfer type
         '''
-        code, message = self.send('TYPE %s' % mode)
+        code, message = self.sendCommand('TYPE %s' % mode)
         if code != 200:
             terminal.error(message)
             return False
         return True
 
-    def send(self, command):
+    def sendCommand(self, command):
         '''
             Send command to FTP server and return the result of execute.
         '''
         dataBytes = (command + '\r\n').encode()
-        self.conn.sendall(dataBytes)
+        self.send(dataBytes)
+        return self.readMessage()
+
+    def send(self, data):
+        '''
+            Send data to server.
+        '''
+        try:
+            self.conn.sendall(data)
+        except Exception as e:
+            terminal.error('Send data to server failed: %s' % str(e))
+            return False
+        return True
+    
+    def readMessage(self):
+        '''
+            Read and format message to code and message
+        '''
         result = self.read().decode()
+        if len(result) == 0:
+            return 0, 'Unknow error.'
         code = int(result[0:3])
+        # Timeout re-connect
+        if code == 421:
+            status = self.connect(self.host, self.port)
+            if status:
+                status = self.login()
+                if status:
+                    terminal.info('FTP server re-connect, please re do your action.')
+                    return 0, ''
+            terminal.error('FTP server connection timeout, please re-connect.')
+            exit()
         message = result[4:].strip()
         return code, message
 
@@ -101,17 +138,17 @@ class Connect:
                 data = data + tmpData
                 if len(tmpData) < self.BUFFER_SIZE:
                     break
-            except EOFError:
-                return
+            except:
+                break
         return data
-    
+
     def close(self):
         '''
             Connection close
         '''
         self.conn.close()
-        terminal.info('Connection closed.')
-    
+        return True
+
     def __del__(self):
         '''
             Del

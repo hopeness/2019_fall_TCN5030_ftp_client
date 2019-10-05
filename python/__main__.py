@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import argparse
+import argparse, time
 from . import terminal, remote, command
 
 # Parse parameters
@@ -22,7 +22,8 @@ terminal.info('Server connected')
 terminal.info(welcome.decode().strip())
 
 # Do login
-status = ftp.login()
+ftp.terminalLogin()
+status = ftp.login(ftp.user, ftp.password)
 if not status:
     exit()
 
@@ -37,7 +38,7 @@ while True:
     if instance == None:
         # Can not find out object
         terminal.error(
-            'unsupported command "%s", you can input "help" to find which command you want.' % cmd[0])
+            'unsupported command "%s", you can input "help" to find out which command you need.' % cmd[0])
         continue
     obj = instance(ftp)
     status = obj.execute(cmd[0], cmd[1])

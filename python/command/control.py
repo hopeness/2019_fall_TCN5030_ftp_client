@@ -23,7 +23,7 @@ class qt:
             execute
         '''
         command = 'QUIT'
-        code, message = self.ftp.send(command)
+        code, message = self.ftp.sendCommand(command)
         if code != 221:
             terminal.error('Normal exit failure: %d %s' % (code, message))
         terminal.info('Goodbye.')

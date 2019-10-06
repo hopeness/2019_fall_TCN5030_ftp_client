@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 import time
-from . import terminal
 
 
 def run():
@@ -31,11 +30,13 @@ def echo(msg):
     '''
     print(msg)
 
+
 def info(msg):
     '''
         Print message with infomation
     '''
     print('[%s] %s' % (formatTime(), msg))
+
 
 def error(msg):
     '''

@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import argparse
-from myftp import terminal, remote, command
+from . import terminal, remote, command
 
 # Parse parameters
 parser = argparse.ArgumentParser(description='FTP client')

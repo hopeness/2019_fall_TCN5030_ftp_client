@@ -49,7 +49,11 @@ class ls:
 
         # Read received data
         data = dataConn.read()
-        terminal.echo(data.decode().strip())
+        showData = data.decode().strip()
+        if len(showData) > 0:
+            terminal.echo(showData)
+        else:
+            terminal.info("Empty directory.")
         status = self.ftp.read()
         if status.decode()[0:3] != 226:
             return False

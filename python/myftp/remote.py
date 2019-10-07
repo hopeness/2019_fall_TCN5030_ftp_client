@@ -29,9 +29,9 @@ class Connect:
             Connect
         '''
         self.host = host
-        self.port = port
+        self.port = int(port)
         try:
-            self.conn.connect((self.host, self.port))
+            test = self.conn.connect((self.host, self.port))
             self.conn.setblocking(True)
             return True
         except Exception as e:

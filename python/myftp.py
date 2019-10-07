@@ -18,8 +18,11 @@ if status == False:
     exit()
 
 welcome = ftp.read()
-terminal.info('Server connected')
-terminal.info(welcome.decode().strip())
+if len(welcome) > 0:
+    terminal.info('Server connected')
+    terminal.info(welcome.decode().strip())
+else:
+    terminal.error('FTP server has no welcome message, maybe something wrong.')
 
 # Do login
 ftp.terminalLogin()
